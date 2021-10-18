@@ -1,0 +1,126 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height:100%;
+}
+
+.wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;/*옆으로 정렬*/
+    flex-direction: column;/*세로정렬*/
+    overflow: hidden;
+}
+.user-container{
+    background: #a9bdce;
+    flex:1;
+    display:flex;
+    justify-content: flex-start;
+    align-items: center; /*위 아래로도 정가운데 오도록*/
+    padding:0.5rem;
+}
+
+.user-container label {
+    font-size: 14px;
+    margin-right: 1rem;
+}
+.user-container input {
+    border-radius: 3px;
+    border:none;
+    height:100%;
+}
+
+.display-container{
+    flex:12;
+    background: #b2c7d9;
+    overflow-y: scroll;/*내용이 많아지면 스크롤이 생성되도록*/
+}
+
+.input-container{
+    flex:1;
+    display: flex;
+    justify-content: stretch;/*처음부터 영역을 먹을 수 있도록*/
+    align-items: stretch;
+}
+
+.input-container span{
+    display: flex;
+    justify-content: flex-start; /*시작되는 지점부터 정렬되도록*/
+    align-items: center;
+    padding:0.3rem;
+    width:100%;
+}
+
+.chatting-input {
+    font-size: 12px;
+    height:100%;
+    flex:8;
+    border:none;
+}
+
+.send-button{
+    flex:1;
+    background:#ffeb33;
+    border:none;
+    height:100%;
+    border-radius: 3px;
+}
+
+.chatting-list li {
+    width: 90%;
+    padding:0.3rem;
+    display: flex;
+    justify-content: flex-start;
+    align-items:flex-end; /*세로로 주는 속성*/
+    margin-top:0.5rem;
+}
+
+.profile{
+    display:flex;
+    flex-direction: column;/*세로로 정렬*/
+    align-items: center;
+    justify-content: center;
+    flex:1;
+
+}
+
+.profile .user {
+    font-size: 10px;
+    margin-bottom:0.2rem;
+}
+
+.profile .image {
+    border-radius: 50%;
+    object-fit: cover; /*이미지가 크기에 딱 맞게 들어감*/
+    width:50px;
+    height:50px;
+}
+
+.message {
+    border-radius: 5px;
+    padding: 0.5rem;
+    font-size:12px;
+    margin: 0 5px;
+    flex:7;
+}
+
+.time{
+    font-size:10px;
+    margin: 0 5px; /*위아래 0 좌우 5*/
+}
+
+.sent {
+    flex-direction: row-reverse;/*대화창이 오른쪽에서 시작할 수 있도록*/
+    float:right;
+}
+
+.sent .message {
+    background: #ffeb33;
+}
+
+.received .message {
+    background: #fff;
+}
