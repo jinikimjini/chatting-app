@@ -1,0 +1,52 @@
+<!doctype html>
+              <html>
+              <head>
+                <title>main</title>
+                <meta charset="utf-8"> 
+                <style>
+                * {
+                margin: 0;
+                padding: 0;
+            }
+            
+            html, body {
+                height:100%;
+            }
+                .display-container{
+                    flex:12;
+                    background: #ba97c8;
+             
+                }
+                .wrapper {
+                    height: 100%;
+                    width: 100%;
+                    display: flex;/*옆으로 정렬*/
+                    flex-direction: column;/*세로정렬*/
+                    overflow: hidden;
+                }
+                h1{
+                    color:white;
+                    font-size:350%;
+                   
+                }
+                </style>             
+              </head>
+              <body>
+              <div class="wrapper">
+              <div class="display-container">
+              <div style="position: absolute; top:35%; left: 42%;">
+              <div style="display:flex;">  
+              <h1>GENIE</h1>
+                <img alt="logo" src="/genie.jpg"/>
+                </div> 
+                <form action="/login" method="post">
+                    <p><input type="text" name="memId" placeholder="아이디를입력해주세요"></p>
+                    <p><textarea name="memPwd" placeholder="description"></textarea></p>
+                    <p><input type="submit"/></p>
+                    </form>
+                
+                </div>
+                </div>
+                </div>
+              </body>
+              </html>

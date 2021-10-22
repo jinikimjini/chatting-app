@@ -55,11 +55,11 @@ module.exports = {
               </html>
           `;
   },
-  list:function(filelist) {
+  list:function(topics) {
     var list = `<ul>`;
     var i = 0;
-    while (i < filelist.length) {
-      list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`;
+    while (i < topics.length) {
+      list = list + `<li><a href="/?id=${topics[i]}">${topics[i].memName}</a></li>`;
       i = i + 1;
     }
     list = list + `</ul>`;
