@@ -1,4 +1,6 @@
 var express = require('express');
+var session = require('express-session');
+var MySQLStore = require('express-mysql-session')(session);
 var app = express();
 var ejs = require('ejs');
 var crypto = require('crypto');
@@ -7,7 +9,6 @@ var path = require('path'); //경로 보안 , 오염된 정보 들어올때
 var sanitizeHtml = require('sanitize-html');//보안, 오염된 정보를 내보낼때
 var mysql = require('mysql');
 var dbConfig = require('./src/db/mysql.js');
-const { user } = require('./src/db/mysql.js');
 var db = {
     host : dbConfig.host,
     user : dbConfig.user,
@@ -21,14 +22,52 @@ var conn = mysql.createConnection(db);
 conn.connect();
 
 
-app.use(bodyParser.urlencoded({ extended: false}));
+
 
 app.set('view engine', 'ejs');//화면 engine을 ejs로 설정 (기본엔진)
 app.set('views','./views'); //view 경로 설정
+app.use(bodyParser.urlencoded({ extended: false}));
+app.use(session({
+  secret: '!@#$%^&*', //세션 암호화
+  store: new MySQLStore(db), //세션데이터를 저장하는 곳 
+  resave: false, //세션을 항상 저장할지 여부를 정하는값(false권장)
+  saveUninitialized: false //초기화되지않은채 스토어에 저장 true
+}));
+app.use(express.static('./src'));//express 에서 정적파일을 컨트롤 , 경로설정
+
 
 app.get('/', function (req, res) {
-    res.render('login');
+  if(!req.session.memId){
+    res.redirect('/login')//로그인세션이 안되어있으면 로그인페이지 이동
+  }else{
+    res.redirect('/memberList'); //
+  }
+   
 });
+
+
+app.get('/login', function (req, res) {
+  if(!req.session.memId){
+    res.render('login',{message:'input your id and password'});//render-ejs파일로 이동
+  }else{
+    res.redirect('/memberList');
+  }
+});
+
+app.get('/memberList', function (req, res) {
+  if(!req.session.memId){
+    res.redirect('/login');
+  }else{
+    res.render('memberList', {memId:req.session.memId});
+  }
+});
+
+app.get('/logout', function (req, res) {
+  req.session.destroy(function(err){ //세션 삭제
+    res.redirect('/');
+  });
+});
+
 
 app.post('/login', function(req, res){
   var id= req.body.memId;
@@ -44,7 +83,7 @@ app.post('/login', function(req, res){
     
     var member = results[0];
       if(pwd === member.memPwd){
-        return res.send('login success');
+        return res.render('memberList');
       } else {
         return res.send('please check your password')
       }

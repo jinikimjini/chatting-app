@@ -7,6 +7,13 @@ html, body {
     height:100%;
 }
 
+h1{
+    color:white;
+    font-size:350%; 
+    float:left;
+    margin-top:50px;
+}
+
 .wrapper {
     height: 100%;
     width: 100%;
@@ -35,7 +42,7 @@ html, body {
 
 .display-container{
     flex:12;
-    background: #b2c7d9;
+    background: #ba97c8;
     overflow-y: scroll;/*내용이 많아지면 스크롤이 생성되도록*/
 }
 
@@ -123,4 +130,9 @@ html, body {
 
 .received .message {
     background: #fff;
+}
+
+.login_img{
+    width:120px;
+    height:120px;
 }
