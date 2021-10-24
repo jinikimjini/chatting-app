@@ -1,9 +1,7 @@
-
-
 //refactoring 리펙토링 >>코드정리하는것
 module.exports = {
-  html:function(title, list, body, control) {
-    return `<!doctype html>
+    html: function (title, list, body, control) {
+        return `<!doctype html>
               <html>
               <head>
                 <title>main</title>
@@ -54,19 +52,19 @@ module.exports = {
               </body>
               </html>
           `;
-  },
-  list:function(topics) {
-    var list = `<ul>`;
-    var i = 0;
-    while (i < topics.length) {
-      list = list + `<li><a href="/?id=${topics[i]}">${topics[i].memName}</a></li>`;
-      i = i + 1;
-    }
-    list = list + `</ul>`;
-    return list;
-  },
-  htmlMain:function(login) {
-    return `<!doctype html>
+    },
+    list: function (topics) {
+        var list = `<ul>`;
+        var i = 0;
+        while (i < topics.length) {
+            list = list + `<li><a href="/?id=${topics[i]}">${topics[i].memName}</a></li>`;
+            i = i + 1;
+        }
+        list = list + `</ul>`;
+        return list;
+    },
+    htmlMain: function (login) {
+        return `<!doctype html>
               <html>
               <head>
                 <title>main</title>
@@ -114,5 +112,5 @@ module.exports = {
               </body>
               </html>
           `;
-  },
+    }
 }

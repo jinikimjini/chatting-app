@@ -1,27 +1,29 @@
 <!doctype html>
-              <html>
-              <head>
-                <title>main</title>
-                <meta charset="utf-8"> 
-                <link rel="stylesheet" type="text/css" href="css/style.css">
+<html>
+    <head>
+        <title>login</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
 
-              </head>
-              <body>
-              <div class="wrapper">
-              <div class="display-container">
-              <div style="position: absolute; top:35%; left: 42%;">
-                
-              <h1>GENIE</h1> 
-                <img class="login_img" alt="logo" src="/img/genie.png"/>
-                
-                <form action="/login" method="post">
-                    <p><input type="text" name="memId" placeholder="아이디를입력해주세요"></p>
-                    <p><textarea name="memPwd" placeholder="description"></textarea></p>
-                    <p><input type="submit"/></p>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="display-container">
+                <div style="position: absolute; top:35%; left: 42%;">
+
+                    <h1>GENIE</h1>
+                    <img class="login_img" alt="logo" src="/img/genie.png"/>
+
+                    <form action="/login" method="post">
+                        <p><input type="text" name="memId" class="login_input" placeholder="아이디를입력해주세요"/></p>
+                        <p>
+                            <input type="password" name="memPwd" class="login_input" placeholder="비밀번호를입력해주세요"/>
+                        </p>
+                        <p><input class="login_button" type="submit" value="로그인" /></p>
                     </form>
-                
+
                 </div>
-                </div>
-                </div>
-              </body>
-              </html>
+            </div>
+        </div>
+    </body>
+</html>
