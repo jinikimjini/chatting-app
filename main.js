@@ -48,13 +48,17 @@ app.get('/friendsList', function (req, res) {
         res.redirect('/login');
     } else {
         var memId = req.session.memId;
-        var sql = 'SELECT  m.memName, m.memNum FROM member as m left outer join friends as f on f.memNum = ' +
+        var memName = req.session.memName;
+        var sql = 'SELECT  m.memName, m.memNum, profileImg, profileContent FROM member as m left outer join friends as f on f.memNum = ' +
                 'm.memNum WHERE f.memId=?';
         conn.query(sql, memId, function (err, results) {
             if (err) {
                 console.log(err);
-            } else {           
-               res.render('friendsList', {data: results});
+            } else {  
+               
+                     
+               res.render('friendsList', {data: results,
+            memName: memName});
             }
 
         });
