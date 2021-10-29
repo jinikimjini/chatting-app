@@ -65,6 +65,24 @@ app.get('/friendsList', function (req, res) {
     }
 });
 
+app.post('/searchFriends', function (req, res) {
+    if (!req.session.memId) {
+        res.redirect('/login');
+    } else {
+        var memId = req.body.memId;
+        var sql = 'SELECT  m.memName, m.memNum FROM member as m left outer join friends as f on f.memNum = ' +
+        'm.memNum WHERE m.memId=?';
+        conn.query(sql, memId, function (err, results) {
+            if (err) {
+                console.log(err);
+            } else {    
+               res.json(results);
+            }
+
+        });
+    }
+});
+
 app.get('/logout', function (req, res) {
     req
         .session
