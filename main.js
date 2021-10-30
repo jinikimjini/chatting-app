@@ -9,6 +9,14 @@ var path = require('path'); //경로 보안 , 오염된 정보 들어올때
 var sanitizeHtml = require('sanitize-html'); //보안, 오염된 정보를 내보낼때
 var mysql = require('mysql');
 var dbConfig = require('./src/db/mysql.js');
+const multer = require('multer');
+const {createConnection} = require('net');
+const upload = multer({
+    dest: 'uploads/',
+    limits: {
+        fileSize: 5 * 1024 * 1024
+    }
+});
 var db = {
     host: dbConfig.host,
     user: dbConfig.user,
@@ -30,9 +38,10 @@ app.use(session({
     saveUninitialized: false //초기화되지않은채 스토어에 저장 true
 }));
 app.use(express.static('./src')); //express 에서 정적파일을 컨트롤 , 경로설정
+app.use('/image', express.static('./uploads')); //이미지 업로드
 
 app.get('/', function (req, res) {
-    if (req.session.memId===undefined) {
+    if (req.session.memId === undefined) {
         res.render('login') //로그인세션이 안되어있으면 로그인페이지 이동
 
     } else {
@@ -42,6 +51,11 @@ app.get('/', function (req, res) {
 
 });
 
+app.get('/join', function (req, res) {
+
+    res.render('join');
+
+});
 
 app.get('/friendsList', function (req, res) {
     if (!req.session.memId) {
@@ -49,16 +63,26 @@ app.get('/friendsList', function (req, res) {
     } else {
         var memId = req.session.memId;
         var memName = req.session.memName;
-        var sql = 'SELECT  m.memName, m.memNum, profileImg, profileContent FROM member as m left outer join friends as f on f.memNum = ' +
-                'm.memNum WHERE f.memId=?';
+        var profileImg = req.session.profileImg;
+        var profileContent = req.session.profileContent;
+        console.log(profileContent);
+        if(profileImg != null) {
+        var buffer2 = Buffer.from(profileImg, 'utf8'); 
+        var profileImg = buffer2.toString(); } //버퍼객체 안의 내용 String으로 변경
+
+
+        var sql = 'SELECT  m.memName, m.memNum, profileImg, profileContent FROM member as m left ' +
+                'outer join friends as f on f.memNum = m.memNum WHERE f.memId=?';
         conn.query(sql, memId, function (err, results) {
             if (err) {
                 console.log(err);
-            } else {  
-               
-                     
-               res.render('friendsList', {data: results,
-            memName: memName});
+            } else {
+                res.render('friendsList', {
+                    data: results,
+                    memName: memName,
+                    profileImg : profileImg,
+                    profileContent: profileContent
+                });
             }
 
         });
@@ -70,13 +94,13 @@ app.post('/searchFriends', function (req, res) {
         res.redirect('/login');
     } else {
         var memId = req.body.memId;
-        var sql = 'SELECT  m.memName, m.memNum FROM member as m left outer join friends as f on f.memNum = ' +
-        'm.memNum WHERE m.memId=?';
+        var sql = 'SELECT  m.memName, m.memNum FROM member as m left outer join friends as f on f' +
+                '.memNum = m.memNum WHERE m.memId=?';
         conn.query(sql, memId, function (err, results) {
             if (err) {
                 console.log(err);
-            } else {    
-               res.json(results);
+            } else {
+                res.json(results);
             }
 
         });
@@ -107,19 +131,54 @@ app.post('/login', function (req, res) {
         console.log(member);
         if (pwd === member.memPwd) {
             req.session.memNum = results[0].memNum; //세션에 로그인 정보 입력
-            req.session.memId = results[0].memId;  
+            req.session.memId = results[0].memId;
             req.session.memPwd = results[0].memPwd;
-            req.session.memName = results[0].memName; 
-            req.session.memPhone = results[0].memPhone; 
-            req.session.save(function(){   //세션에 로그인 정보 저장
-                res.redirect('/friendsList');
-            })
-            
+            req.session.memName = results[0].memName;
+            req.session.memPhone = results[0].memPhone;
+            req.session.profileImg = results[0].profileImg;
+            req.session.profileContent = results[0].profileContent;
+            req
+                .session
+                .save(function () { //세션에 로그인 정보 저장
+                    res.redirect('/friendsList');
+                })
+
         } else {
             return res.send('please check your password')
         }
 
     })
+})
+
+app.post('/addMembers', upload.single('profileImg'), (req, res) => {
+
+    let sql = 'INSERT INTO MEMBER(memId,memPwd,memName,memPhone,profileImg,profileContent) VA' +
+            'LUES (?,?,?,?,?,?)';
+
+    let memId = req.body.memId;
+    let memPwd = req.body.memPwd;
+    let memName = req.body.memName;
+    let memPhone = req.body.memPhone;
+    let profileImg = '/image/' + req.file.filename;
+    console.log(profileImg);
+    let profileContent = req.body.profileContent;
+    let params = [
+        memId,
+        memPwd,
+        memName,
+        memPhone,
+        profileImg,
+        profileContent
+    ];
+    conn.query(sql, params, (err, rows, fields) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send(rows);
+        }
+
+    })
+
 })
 
 app.listen(5000); //서버를 구동시키는 api

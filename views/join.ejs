@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+    <head>
+        <title>join</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <script>
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#preview').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div
+                class="display-container"
+                style="background-color: white; margin-left:40px; margin-top:40px;">
+                <div >
+                    <h1 style="font-size:28px; margin-bottom:20px;">회원가입</h1>
+                    <form action="/addMembers" method="post" encType='multipart/form-data'>
+                        <p>
+                            <span style="color:red;">*
+                            </span><input type="text" name="memId" class="join_input" placeholder="아이디를입력해주세요"/></p>
+                        <p>
+                            <span style="color:red;">*
+                            </span><input type="text" name="memName" class="join_input" placeholder="이름을입력해주세요"/></p>
+                        <p>
+                            <span style="color:red;">*
+                            </span>
+                            <input
+                                type="password"
+                                name="memPwd"
+                                class="join_input"
+                                placeholder="비밀번호를입력해주세요"/>
+                        </p>
+                        <p>
+                            <span style="color:red;">*
+                            </span><input
+                                type="text"
+                                name="memPhone"
+                                class="join_input"
+                                placeholder="핸드폰번호를입력해주세요 ex) 01012341234"/></p>
+                        <p><input
+                            type="file"
+                            style="margin-left:12px;"
+                            name="profileImg"
+                            onchange="readURL(this);"
+                            accept="image/jpg, image/png, image/jpeg"></p>
+                        <p><input
+                            type="text"
+                            name="profileContent"
+                            class="join_input"
+                            placeholder="대화명을입력해주세요"
+                            style="margin-left:12px;"></p>
+                        <p><input
+                            class="login_button"
+                            type="submit"
+                            value="로그인"
+                            style="width:403px; margin-left:12px;"/></p>
+                    </form>
+                    <a class="joinLink" href="/" style="margin-left:12px;">메인으로 돌아가기</a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

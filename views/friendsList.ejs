@@ -55,7 +55,7 @@
                 border: none;
                 margin-top: 20px;
                 cursor: pointer;
-                border-radius:5px;
+                border-radius: 5px;
             }
             #searchFriends:hover {
                 color: #fff;
@@ -104,90 +104,155 @@
                 transform: scale(1.0);
                 transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
             }
-            #img_button{
-                border:none;
-                background:white;
-                cursor:pointer;
+            #img_button {
+                border: none;
+                background: white;
+                cursor: pointer;
             }
-            hr{
+            hr {
                 border: 0.1em solid #eeeeee;
-                border-bottom:0px;
+                border-bottom: 0;
             }
             .friendsList {
-                display : flex ; 
-                flex-direction : row ; 
+                display: flex;
+                flex-direction: row;
 
+            }
+            .profileImg {
+                height: 55px;
+                width: 55px;
+                float: left;
+                border-radius: 15px;
+            }
+
+            .profileFont{
+                height:55px; 
+                margin-top:0px;
+                margin-bottom:0px;
+                padding-top:5px; 
+                margin-left:15px;
             }
         </style>
         <script>
-             function searchFriends(){
-                    var memId = document.getElementById("memIdInput").value;
-                    $.ajax({
-                        url : "/searchFriends",
-                        type : "POST",
-                        dataType : "JSON",
-                        data : {"memId" : memId}
+            function searchFriends() {
+                var memId = document
+                    .getElementById("memIdInput")
+                    .value;
+                $
+                    .ajax({
+                        url: "/searchFriends",
+                        type: "POST",
+                        dataType: "JSON",
+                        data: {
+                            "memId": memId
+                        }
                     })
+                    .done(function (json) {
+                        var searchResult = document.getElementById("searchResult");
+                        while (searchResult.hasChildNodes()) {
+                            searchResult.removeChild(searchResult.firstChild);
+                        } //검색 회원 삭제
 
-                    .done(function (json){
-                        for(var i in json)
-                        { for(var j in json[i]){ 
-                            $(".searchResult").append('<td>'+json[i][j]+'</td>');
-                            
-                        } }
+                        for (var i in json) {
+                            for (var j in json[i]) {
 
-                        
-                         
+                                $(".searchResult").append('<td>' + json[i][j] + '</td>');
+
+                            }
+                        }
+
                     })
-
-                    .fail(function (xhr, status, errorThrown){
+                    .fail(function (xhr, status, errorThrown) {
                         alert("다시 검색해주세요")
                     })
-                };
+            };
+
         </script>
 
     </head>
-    <body style="margin:0px;"> 
-        <div class="friendsList" >
+    <body style="margin:0px;">
+        <div class="friendsList">
             <div style="width:100px; background-color:#ebe7f1; margin-left:10px;">
-                <img src="/img/user.png" alt="addFriends" height="40" >
-        </div>
-        <div class="wrapper" style="width:100%; margin-left:30px;">
-            <div class="display-container">
-                <div >
-                    <div style=" height:60px; margin-top:30px; ">
-                        <h1 style="font-size:28px; margin-top:0px; float:left;">친구</h1>
-                        <button id="img_button" class="trigger" style="float:right;"><img src="/img/addFriends.png" alt="addFriends" height="33" ></button>
+                <img src="/img/user.png" alt="user" height="40">
+            </div>
+            <div class="wrapper" style="width:100%; margin-left:30px;">
+                <div class="display-container">
+                    <div >
+                        <div style=" height:60px; margin-top:30px; ">
+                            <h1 style="font-size:28px; margin-top:0px; float:left;">친구</h1>
+                            <button id="img_button" class="trigger" style="float:right;"><img src="/img/addFriends.png" alt="addFriends" height="33"></button>
+                        </div>
+                        <h4 style="color:gray;">내프로필</h4>
+                        
+                        <a> 
+                            <% if(profileImg !=null) { %>
+                            <img class="profileImg" src="<%= profileImg %>"/> <% } else { %>
+                                    <img class="profileImg" src="/img/profileBasicImg.png"/>
+                                    
+                            <% } %>
+
+                        </a>
+                        <h4 style="display:flex; flex-direction: column; ">
+                        <p class="profileFont"><%=memName %> 
+                            <% if(profileContent !=null) { %>
+                            <br>
+                            <span style="font-weight: normal; padding-top:5px;"><%=profileContent %>
+                            <% } %></span></p>
+                        </h4>
+                        <hr>
+                        <h4 style="color:gray;">친구 110명</h4>
+                        <div>
+                            <% if(data != "") {%>
+                                <% for(let i=0; i<data.length; i++){ %>
+                                    <div >
+                                        <a href="javascript:openWindowPop('/popup/popup.html', 'popup');">
+                                            <% if(data[i].profileImg !=null) { %>
+                                                <img class="profileImg" src="<%=data[i].profileImg%>"/>
+                                            <% } else {%>
+                                                <img class="profileImg" src="/img/profileBasicImg.png"/>
+                                            <% } %>
+                                        </a>
+                                        <h4 style="display:flex; flex-direction: column; ">
+                                            <p class="profileFont"><%=data[i].memName %>
+                                                <% if(data[i].profileContent !=null) { %>
+                                                    <br>
+                                                    <span style="font-weight: normal; padding-top:5px;"><%=data[i].profileContent %>
+                                                    <% } %></span></p>
+                                        </h4>
+                                    </div>
+                                <% } %>
+                            </div>
+                        <% } else {%>
+                            <h1>친구없어요</h1>
+                        <% }%>
+
                     </div>
-                    <h4><%=memName %></h4>
-                    <hr>
-                    <h4 style="color:gray;">친구 110명</h4>
-                    <% if(data != "") {%>
-                        <% for(let i=0; i<data.length; i++){ %>
-                            <h4><%=data[i].profileImg %>
-                                <%=data[i].memName %>
-                                <%=data[i].profileContent %></h4>
-                        <% } %>
-                    <% } else {%>
-                        <h1>친구없어요</h1>
-                    <% }%>
-                </div>  
 
                     <!-- 팝업 될 레이어 -->
-                    <div class="modal">
-                        <div class="modal-content">
+                    <div class="modal" >
+                        <div class="modal-content" id="modal">
                             <span class="close-button">&times;</span>
                             <h2 class="title">친구추가</h2>
                             <!--<form action="/" method="POST">-->
-                                
-                                <input id="memIdInput" type="text" name="memId" placeholder="아이디를 입력해주세요" required="required" style="width:300px; float:left;">
-                                <label></label>
 
-                                <button onclick="searchFriends()" id="searchFriends"  style="height:52px; margin-top:2px; margin-left:5px;">검색</button>
-                                <table>
-                                <tr class="searchResult" style="height:120px;"></tr></table>
-                                <input type="submit" id="submit" value="확인" style="float:right;">
-                            
+                            <input
+                                id="memIdInput"
+                                type="text"
+                                name="memId"
+                                placeholder="아이디를 입력해주세요"
+                                required="required"
+                                style="width:343px; float:left;">
+                            <label></label>
+
+                            <button
+                                onclick="searchFriends()"
+                                id="searchFriends"
+                                style="height:52px; margin-top:2px; margin-left:5px;">검색</button>
+                            <table>
+                                <tr class="searchResult" id="searchResult" style="height:120px;"></tr>
+                            </table>
+                            <input type="submit" id="submit" value="확인" style="float:right;">
+
                         </div>
                     </div>
 
@@ -195,11 +260,15 @@
                         var modal = document.querySelector(".modal");
                         var trigger = document.querySelector(".trigger");
                         var closeButton = document.querySelector(".close-button");
-                
 
                         //console.log(modal);
 
                         function toggleModal() {
+                            var searchResult = document.getElementById("searchResult");
+                            while (searchResult.hasChildNodes()) {
+                                searchResult.removeChild(searchResult.firstChild);
+                            } //검색 회원 삭제
+                            $('#memIdInput').val(''); //input 박스 입력 val 초기화
                             modal
                                 .classList
                                 .toggle("show-modal");
@@ -213,7 +282,7 @@
 
                         trigger.addEventListener("click", toggleModal);
                         closeButton.addEventListener("click", toggleModal);
-                  
+
                         window.addEventListener("click", windowOnClick);
                     </script>
 
