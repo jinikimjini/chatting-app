@@ -75,6 +75,19 @@
                 transform: scale(1.1);
                 transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
             }
+
+            .modal1 {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                visibility: hidden;
+                transform: scale(1.1);
+                transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+            }
+
             .modal-content {
                 position: absolute;
                 top: 50%;
@@ -86,6 +99,18 @@
                 height: 350px;
                 border-radius: 0.5rem;
             }
+
+            .modal-content1 {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),url(/img/background.png);
+                width: 350px;
+                height: 680px;
+                border-radius: 0.5rem;
+
+            }
             .close-button {
                 float: right;
                 width: 1.5rem;
@@ -95,9 +120,21 @@
                 border-radius: 0.25rem;
                 background-color: lightgray;
             }
+
+            .close-button1 {
+                float: right;
+                width: 1.5rem;
+                line-height: 1.5rem;
+                text-align: center;
+                cursor: pointer;
+                border-radius: 0.25rem;
+                color: white;
+
+            }
             .close-button:hover {
                 background-color: darkgray;
             }
+
             .show-modal {
                 opacity: 1;
                 visibility: visible;
@@ -123,14 +160,30 @@
                 width: 55px;
                 float: left;
                 border-radius: 15px;
+                
             }
 
-            .profileFont{
-                height:55px; 
-                margin-top:0px;
-                margin-bottom:0px;
-                padding-top:5px; 
-                margin-left:15px;
+            .profileFont {
+                height: 55px;
+                margin-top: 0;
+                margin-bottom: 0;
+                padding-top: 5px;
+                margin-left: 15px;
+            }
+
+            .profileDetail_img {
+                width: 90px;
+                height: 90px;
+                border-radius: 20px;
+
+                border: none;
+            }
+
+            .profileDetail_name {
+                margin-top: 10px;
+                font-size: 20px;
+                color: white;
+                font-weight: normal;
             }
         </style>
         <script>
@@ -153,20 +206,16 @@
                             searchResult.removeChild(searchResult.firstChild);
                         } //검색 회원 삭제
 
-                        for (var i in json) {
-                            for (var j in json[i]) {
-
-                                $(".searchResult").append('<td>' + json[i][j] + '</td>');
-
-                            }
-                        }
+                        $(".searchResult").append(
+                            '<td><img alt="seachProfileImg" src="' + json[0].profileImg + '"/></td>'
+                        );
+                        $(".searchResult").append('<td>' + json[0].memName + '</td>');
 
                     })
                     .fail(function (xhr, status, errorThrown) {
                         alert("다시 검색해주세요")
                     })
             };
-
         </script>
 
     </head>
@@ -183,21 +232,24 @@
                             <button id="img_button" class="trigger" style="float:right;"><img src="/img/addFriends.png" alt="addFriends" height="33"></button>
                         </div>
                         <h4 style="color:gray;">내프로필</h4>
-                        
-                        <a> 
+
+                        <a>
                             <% if(profileImg !=null) { %>
-                            <img class="profileImg" src="<%= profileImg %>"/> <% } else { %>
-                                    <img class="profileImg" src="/img/profileBasicImg.png"/>
-                                    
+                                <button
+                                    class="profileImg trigger1"
+                                    style="background-color:white; border:none; cursor:pointer;"><img class="profileImg" src="<%= profileImg %>"/></button>
+                            <% } else { %>
+                                <img class="profileImg" src="/img/profileBasicImg.png"/>
+
                             <% } %>
 
                         </a>
                         <h4 style="display:flex; flex-direction: column; ">
-                        <p class="profileFont"><%=memName %> 
-                            <% if(profileContent !=null) { %>
-                            <br>
-                            <span style="font-weight: normal; padding-top:5px;"><%=profileContent %>
-                            <% } %></span></p>
+                            <p class="profileFont"><%=memName %>
+                                <% if(profileContent !=null) { %>
+                                    <br>
+                                    <span style="font-weight: normal; padding-top:5px;"><%=profileContent %>
+                                    <% } %></span></p>
                         </h4>
                         <hr>
                         <h4 style="color:gray;">친구 110명</h4>
@@ -228,8 +280,8 @@
 
                     </div>
 
-                    <!-- 팝업 될 레이어 -->
-                    <div class="modal" >
+                    <!-- 팝업 될 레이어 / 친구 추가-->
+                    <div class="modal">
                         <div class="modal-content" id="modal">
                             <span class="close-button">&times;</span>
                             <h2 class="title">친구추가</h2>
@@ -255,11 +307,43 @@
 
                         </div>
                     </div>
+                    <!-- 팝업 될 레이어 // 내프로필편집-->
+                    <div class="modal1">
+                        <div class="modal-content1" id="modal">
+                            <span class="close-button1">&times;</span>
+                            <h2 class="title"></h2>
+                            <!--<form action="/" method="POST">-->
 
+                            <label></label>
+
+                            <div style="margin-top:110%; height:100px; text-align:center;">
+
+                                <% if(profileImg !=null) { %>
+                                    <button class="profileDetail_img trigger1"><img class="profileDetail_img" src="<%= profileImg %>"/></button>
+                                <% } else { %>
+                                    <img class="profileDetail_img" src="/img/profileBasicImg.png"/>
+
+                                <% } %>
+
+                                <p class="profileDetail_name"><%=memName %></p>
+                                <hr
+                                    style="width:100%; margin-top:50px;border:0.01em solid #eeeeee86; border-bottom: 0;">
+                            </div>
+                            <div style="margin-top:28%; margin-left:20%;">
+                            <button class="profileImg" style="background-color:transparent; border:none; cursor:pointer;"><img style=" width:30px; height:30px;" src="/img/pen.png"/></button>
+                           
+                            </div>
+                            <p>프로필편집</p>
+                        </div>
+                     
+                    </div>
                     <script type="text/javascript">
                         var modal = document.querySelector(".modal");
+                        var modal1 = document.querySelector(".modal1");
                         var trigger = document.querySelector(".trigger");
+                        var trigger1 = document.querySelector(".trigger1");
                         var closeButton = document.querySelector(".close-button");
+                        var closeButton1 = document.querySelector(".close-button1");
 
                         //console.log(modal);
 
@@ -274,14 +358,25 @@
                                 .toggle("show-modal");
                         }
 
+                        function toggleModal1() {
+                            modal1
+                                .classList
+                                .toggle("show-modal");
+                        }
+
                         function windowOnClick(event) {
                             if (event.target === modal) {
                                 toggleModal();
                             }
+                            if (event.target === modal1) {
+                                toggleModal1();
+                            }
                         }
 
                         trigger.addEventListener("click", toggleModal);
+                        trigger1.addEventListener("click", toggleModal1);
                         closeButton.addEventListener("click", toggleModal);
+                        closeButton1.addEventListener("click", toggleModal1);
 
                         window.addEventListener("click", windowOnClick);
                     </script>

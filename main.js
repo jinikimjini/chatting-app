@@ -65,7 +65,7 @@ app.get('/friendsList', function (req, res) {
         var memName = req.session.memName;
         var profileImg = req.session.profileImg;
         var profileContent = req.session.profileContent;
-        console.log(profileContent);
+        console.log(profileImg);
         if(profileImg != null) {
         var buffer2 = Buffer.from(profileImg, 'utf8'); 
         var profileImg = buffer2.toString(); } //버퍼객체 안의 내용 String으로 변경
@@ -94,12 +94,12 @@ app.post('/searchFriends', function (req, res) {
         res.redirect('/login');
     } else {
         var memId = req.body.memId;
-        var sql = 'SELECT  m.memName, m.memNum FROM member as m left outer join friends as f on f' +
-                '.memNum = m.memNum WHERE m.memId=?';
+        var sql = 'SELECT  memName, profileImg FROM member WHERE memId=?';
         conn.query(sql, memId, function (err, results) {
             if (err) {
                 console.log(err);
             } else {
+
                 res.json(results);
             }
 
