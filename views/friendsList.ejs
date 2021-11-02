@@ -4,6 +4,11 @@
         <title>memberList</title>
         <meta charset="utf-8">
         <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <!--modal 드래그-->
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <!--modal 드래그-->
+
         <style type="text/css">
             label {
                 display: block;
@@ -88,6 +93,36 @@
                 transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
             }
 
+            .modal2 {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                visibility: hidden;
+                transform: scale(1.1);
+                transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+            }
+
+            .modalFriends0,
+            .modalFriends1,
+            .modalFriends2,
+            .modalFriends3,
+            .modalFriends4,
+            .modalFriends5,
+            .modalFriends6 {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                visibility: hidden;
+                transform: scale(1.1);
+                transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+            }
+
             .modal-content {
                 position: absolute;
                 top: 50%;
@@ -105,10 +140,20 @@
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),url(/img/background.png);
-                width: 350px;
-                height: 680px;
-                border-radius: 0.5rem;
+                background-image: url("/img/background.jpg");
+                width: 380px;
+                height: 720px;
+                /*linear-gradient(rgba(24, 24, 34, 0.4), rgba(24, 24, 34, 0.4)),*/
+
+            }
+            .modal-content2 {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-image: linear-gradient(rgba(24, 24, 34, 0.4), rgba(24, 24, 34, 0.4)),url(/img/background.png);
+                width: 380px;
+                height: 720px;
 
             }
             .close-button {
@@ -119,6 +164,23 @@
                 cursor: pointer;
                 border-radius: 0.25rem;
                 background-color: lightgray;
+            }
+
+            .close-friends-button0,
+            .close-friends-button1,
+            .close-friends-button2,
+            .close-friends-button3,
+            .close-friends-button4,
+            .close-friends-button5,
+            .close-friends-button6,
+            .close-friends-button7 {
+                float: right;
+                width: 1.5rem;
+                line-height: 1.5rem;
+                text-align: center;
+                cursor: pointer;
+                border-radius: 0.25rem;
+                color: white;
             }
 
             .close-button1 {
@@ -160,7 +222,8 @@
                 width: 55px;
                 float: left;
                 border-radius: 15px;
-                
+                background-color:transparent;
+
             }
 
             .profileFont {
@@ -172,11 +235,12 @@
             }
 
             .profileDetail_img {
-                width: 90px;
-                height: 90px;
+                width: 100px;
+                height: 100px;
                 border-radius: 20px;
-
+                background-color:transparent;
                 border: none;
+                cursor:pointer;
             }
 
             .profileDetail_name {
@@ -187,6 +251,7 @@
             }
         </style>
         <script>
+
             function searchFriends() {
                 var memId = document
                     .getElementById("memIdInput")
@@ -216,6 +281,21 @@
                         alert("다시 검색해주세요")
                     })
             };
+
+            $(function () {
+                $('.modal1').draggable({handle: ".modal-content1"});
+            }); //modal 드래그
+
+            function fnImgPop(url){
+  var img=new Image();
+  img.src=url;
+  var img_width=img.width;
+  var win_width=img.width+25;
+  var img_height=img.height;
+  var win=img.height+30;
+  var OpenWindow=window.open('','_blank', 'width='+img_width+', height='+img_height+', menubars=no, scrollbars=auto');
+  OpenWindow.document.write("<style>body{margin:0px;}</style><img src='"+url+"' width='"+win_width+"'>");
+ }
         </script>
 
     </head>
@@ -237,9 +317,11 @@
                             <% if(profileImg !=null) { %>
                                 <button
                                     class="profileImg trigger1"
-                                    style="background-color:white; border:none; cursor:pointer;"><img class="profileImg" src="<%= profileImg %>"/></button>
+                                    style="border:none; cursor:pointer;"><img class="profileImg" src="<%= profileImg %>"/></button>
                             <% } else { %>
-                                <img class="profileImg" src="/img/profileBasicImg.png"/>
+                                <button
+                                    class="profileImg trigger1"
+                                    style=" border:none; cursor:pointer;"><img class="profileImg" src="/img/profileBasicImg.png"/></button>
 
                             <% } %>
 
@@ -257,132 +339,276 @@
                             <% if(data != "") {%>
                                 <% for(let i=0; i<data.length; i++){ %>
                                     <div >
-                                        <a href="javascript:openWindowPop('/popup/popup.html', 'popup');">
+                                        <!-- 팝업 될 레이어 // 프로필 상세보기 친구-->
+
+                                        <div class="modalFriends<%=i%>">
+                                            <div class="modal-content1" id="modal">
+                                                <span class="close-friends-button<%=i%>" onclick="closeButtonFriends('<%=i%>')">&times;</span>
+                                                <h2 class="title"></h2>
+
+                                                <label></label>
+
+                                                <div style="margin-top:107%; height:100px; text-align:center;">
+                                                    <p>
+                                                        <% i %>
+                                                        </p>
+                                                        <% if(data[i].profileImg !=null) { %>
+                                                            <img class="profileDetail_img" src="<%= data[i].profileImg %>" onclick="fnImgPop(this.src)"/>
+                                                        <% } else { %>
+                                                            <img class="profileDetail_img" src="/img/profileBasicImg.png" onclick="fnImgPop(this.src)"/>
+
+                                                        <% } %>
+
+                                                        <p class="profileDetail_name"><%=data[i].memName %></p>
+                                                        <hr
+                                                            style="width:100%; margin-top:50px;border:0.01em solid #eeeeee86; border-bottom: 0;">
+                                                    </div>
+                                                    <div style="margin-top:33%; margin-left:23%;">
+                                                        <button
+                                                            class="profileImg trigger2"
+                                                            style="background-color:transparent; border:none; cursor:pointer; width:100px;"><img style=" width:25px; height:25px;" src="/img/pen.png"/><br>
+                                                            <p style="color:white; ">프로필관리</p>
+                                                        </button>
+                                                        <button
+                                                            class="profileImg"
+                                                            style="background-color:transparent; border:none; cursor:pointer; width:100px;"><img style=" width:25px; height:25px;" src="/img/chatting_white.png"/><br>
+                                                            <p style="color:white; ">나와의채팅</p>
+                                                        </button>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
                                             <% if(data[i].profileImg !=null) { %>
-                                                <img class="profileImg" src="<%=data[i].profileImg%>"/>
+                                                <button
+                                                    onclick="triggerList('<%=i %>')"
+                                                    class="profileImg triggerList<%=i%>"
+                                                    style="background-color:white; border:none; cursor:pointer;"><img class="profileImg" src="<%=data[i].profileImg%>"/></button>
                                             <% } else {%>
-                                                <img class="profileImg" src="/img/profileBasicImg.png"/>
+                                                <button
+                                                    onclick="triggerList('<%=i %>')"
+                                                    class="profileImg triggerList<%=i%>"
+                                                    style="background-color:white; border:none; cursor:pointer;"><img class="profileImg" src="/img/profileBasicImg.png"/></button>
                                             <% } %>
-                                        </a>
-                                        <h4 style="display:flex; flex-direction: column; ">
-                                            <p class="profileFont"><%=data[i].memName %>
-                                                <% if(data[i].profileContent !=null) { %>
-                                                    <br>
-                                                    <span style="font-weight: normal; padding-top:5px;"><%=data[i].profileContent %>
-                                                    <% } %></span></p>
-                                        </h4>
-                                    </div>
-                                <% } %>
-                            </div>
-                        <% } else {%>
-                            <h1>친구없어요</h1>
-                        <% }%>
 
-                    </div>
-
-                    <!-- 팝업 될 레이어 / 친구 추가-->
-                    <div class="modal">
-                        <div class="modal-content" id="modal">
-                            <span class="close-button">&times;</span>
-                            <h2 class="title">친구추가</h2>
-                            <!--<form action="/" method="POST">-->
-
-                            <input
-                                id="memIdInput"
-                                type="text"
-                                name="memId"
-                                placeholder="아이디를 입력해주세요"
-                                required="required"
-                                style="width:343px; float:left;">
-                            <label></label>
-
-                            <button
-                                onclick="searchFriends()"
-                                id="searchFriends"
-                                style="height:52px; margin-top:2px; margin-left:5px;">검색</button>
-                            <table>
-                                <tr class="searchResult" id="searchResult" style="height:120px;"></tr>
-                            </table>
-                            <input type="submit" id="submit" value="확인" style="float:right;">
+                                            <h4 style="display:flex; flex-direction: column; ">
+                                                <p class="profileFont"><%=data[i].memName %>
+                                                    <% if(data[i].profileContent !=null) { %>
+                                                        <br>
+                                                        <span style="font-weight: normal; padding-top:5px;"><%=data[i].profileContent %>
+                                                        <% } %></span></p>
+                                            </h4>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            <% } else {%>
+                                <h1>친구없어요</h1>
+                            <% }%>
 
                         </div>
-                    </div>
-                    <!-- 팝업 될 레이어 // 내프로필편집-->
-                    <div class="modal1">
-                        <div class="modal-content1" id="modal">
-                            <span class="close-button1">&times;</span>
-                            <h2 class="title"></h2>
-                            <!--<form action="/" method="POST">-->
 
-                            <label></label>
+                        <!-- 팝업 될 레이어 / 친구 추가-->
+                        <div class="modal">
+                            <div class="modal-content" id="modal">
+                                <span class="close-button">&times;</span>
+                                <h2 class="title">친구추가</h2>
+                                <form action="/addFriends" method="POST">
 
-                            <div style="margin-top:110%; height:100px; text-align:center;">
-
-                                <% if(profileImg !=null) { %>
-                                    <button class="profileDetail_img trigger1"><img class="profileDetail_img" src="<%= profileImg %>"/></button>
-                                <% } else { %>
-                                    <img class="profileDetail_img" src="/img/profileBasicImg.png"/>
-
-                                <% } %>
-
-                                <p class="profileDetail_name"><%=memName %></p>
-                                <hr
-                                    style="width:100%; margin-top:50px;border:0.01em solid #eeeeee86; border-bottom: 0;">
+                                <input
+                                    id="memIdInput"
+                                    type="text"
+                                    name="memId"
+                                    placeholder="아이디를 입력해주세요"
+                                    required="required"
+                                    style="width:280px; float:left;">
+                                
+                                <input type="submit" id="submit" value="확인" style="float:right; position:relative; margin-top:45%;">
+                            </form>
+                                <button
+                                    onclick="searchFriends()"
+                                    id="searchFriends"
+                                    style="height:52px; margin-top:2px; position:absolute; margin-left:25px; float:left;">검색</button>
+                                <table>
+                                    <tr class="searchResult" id="searchResult" style="height:120px;"></tr>
+                                </table>
+                               
+                                
                             </div>
-                            <div style="margin-top:28%; margin-left:20%;">
-                            <button class="profileImg" style="background-color:transparent; border:none; cursor:pointer;"><img style=" width:30px; height:30px;" src="/img/pen.png"/></button>
-                           
-                            </div>
-                            <p>프로필편집</p>
                         </div>
-                     
+                        <!-- 팝업 될 레이어 // 내프로필상세보기창-->
+                        <div class="modal1">
+                            <div class="modal-content1" id="modal">
+                                <span class="close-button1">&times;</span>
+                                <h2 class="title"></h2>
+                                <!--<form action="/" method="POST">-->
+
+                                <label></label>
+
+                                <div style="margin-top:107%; height:100px; text-align:center;">
+
+                                    <% if(profileImg !=null) { %>
+                                        <img class="profileDetail_img" src="<%= profileImg %>" onclick="fnImgPop(this.src)"/>
+                                    <% } else { %>
+                                        <img class="profileDetail_img" src="/img/profileBasicImg.png" onclick="fnImgPop(this.src)"/>
+
+                                    <% } %>
+
+                                    <p class="profileDetail_name"><%=memName %></p>
+                                    <hr
+                                        style="width:100%; margin-top:50px;border:0.01em solid #eeeeee86; border-bottom: 0;">
+                                </div>
+                                <div style="margin-top:33%; margin-left:23%;">
+                                    <button
+                                        class="profileImg trigger2"
+                                        style="background-color:transparent; border:none; cursor:pointer; width:100px;"><img style=" width:25px; height:25px;" src="/img/pen.png"/><br>
+                                        <p style="color:white; ">프로필관리</p>
+                                    </button>
+                                    <button
+                                        class="profileImg"
+                                        style="background-color:transparent; border:none; cursor:pointer; width:100px;"><img style=" width:25px; height:25px;" src="/img/chatting_white.png"/><br>
+                                        <p style="color:white; ">나와의채팅</p>
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- 팝업 될 레이어 // 내프로필편집창-->
+                        <div class="modal2">
+                            <div class="modal-content2" id="modal">
+                                <span class="close-button1">&times;</span>
+                                <h2 class="title"></h2>
+                                <!--<form action="/" method="POST">-->
+
+                                <label></label>
+                                <div style="margin-top:107%; height:100px; text-align:center;">
+
+                                    <% if(profileImg !=null) { %>
+                                        <img class="profileDetail_img" src="<%= profileImg %>" onclick="fnImgPop(this.src)"/></button>
+                                    <% } else { %>
+                                        <img class="profileDetail_img" src="/img/profileBasicImg.png" onclick="fnImgPop(this.src)"/>
+
+                                    <% } %>
+
+                                    <p class="profileDetail_name"><%=memName %></p>
+                                    <hr
+                                        style="width:100%; margin-top:50px;border:0.01em solid #eeeeee86; border-bottom: 0;">
+                                </div>
+                                <div style="margin-top:33%; margin-left:23%;">
+                                    <button
+                                        class="profileImg trigger2"
+                                        style="background-color:transparent; border:none; cursor:pointer; width:100px;"><img style=" width:25px; height:25px;" src="/img/pen.png"/><br>
+                                        <p style="color:white; ">프로필관리</p>
+                                    </button>
+                                    <button
+                                        class="profileImg"
+                                        style="background-color:transparent; border:none; cursor:pointer; width:100px;"><img style=" width:25px; height:25px;" src="/img/chatting_white.png"/><br>
+                                        <p style="color:white; ">나와의채팅</p>
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <script type="text/javascript">
+
+                            var modal = document.querySelector(".modal");
+                            var modal1 = document.querySelector(".modal1");
+                            var modal2 = document.querySelector(".modal2");
+
+                            var trigger = document.querySelector(".trigger");
+                            var trigger1 = document.querySelector(".trigger1");
+                            var trigger2 = document.querySelector(".trigger2");
+
+                            var closeButton = document.querySelector(".close-button");
+                            var closeButton1 = document.querySelector(".close-button1");
+
+                            //console.log(modal);
+
+                            function toggleModal() {
+                                var searchResult = document.getElementById("searchResult");
+                                while (searchResult.hasChildNodes()) {
+                                    searchResult.removeChild(searchResult.firstChild);
+                                } //검색 회원 삭제
+                                $('#memIdInput').val(''); //input 박스 입력 val 초기화
+                                modal
+                                    .classList
+                                    .toggle("show-modal");
+                            }
+
+                            function toggleModal1() {
+                                modal1
+                                    .classList
+                                    .toggle("show-modal");
+                            }
+
+                            function toggleModal2() {
+                                modal2
+                                    .classList
+                                    .toggle("show-modal");
+                            }
+
+                            function toggleModal3(modalFriends) {
+                                modalFriends
+                                    .classList
+                                    .toggle("show-modal");
+                            }
+
+
+
+                            //친구 프로필 상세창 script
+                            function triggerList(triggerNum) {
+                               
+                                var modalFriends = document.querySelector(".modalFriends" + triggerNum);
+                                var triggerList = document.querySelector(".triggerList" + triggerNum);
+
+                                toggleModal3(modalFriends);
+                              
+
+                            }
+
+                            //친구 프로필 닫기 script
+                            function closeButtonFriends(triggerNum){      
+                                var modalFriends = document.querySelector(".modalFriends" + triggerNum);
+                                toggleModal3(modalFriends);
+                              
+                                
+                            }
+
+                            trigger.addEventListener("click", toggleModal);
+                            trigger1.addEventListener("click", toggleModal1);
+                            trigger2.addEventListener("click", toggleModal2);
+
+                            
+                            closeButton.addEventListener("click", toggleModal);
+                            closeButton1.addEventListener("click", toggleModal1);
+
+
+                            //modal 밖 외부 영역 클릭시 modal 창 닫기
+                            function windowOnClick(event) {
+                                if (event.target === modal) {
+                                    toggleModal();
+                                }
+                                if (event.target === modal1) {
+                                    toggleModal1();
+                                }
+
+                                if (event.target === modal2) {
+                                    toggleModal2();
+                                }
+
+
+                            }
+                            window.addEventListener("click", windowOnClick);
+                        </script>
+
                     </div>
-                    <script type="text/javascript">
-                        var modal = document.querySelector(".modal");
-                        var modal1 = document.querySelector(".modal1");
-                        var trigger = document.querySelector(".trigger");
-                        var trigger1 = document.querySelector(".trigger1");
-                        var closeButton = document.querySelector(".close-button");
-                        var closeButton1 = document.querySelector(".close-button1");
-
-                        //console.log(modal);
-
-                        function toggleModal() {
-                            var searchResult = document.getElementById("searchResult");
-                            while (searchResult.hasChildNodes()) {
-                                searchResult.removeChild(searchResult.firstChild);
-                            } //검색 회원 삭제
-                            $('#memIdInput').val(''); //input 박스 입력 val 초기화
-                            modal
-                                .classList
-                                .toggle("show-modal");
-                        }
-
-                        function toggleModal1() {
-                            modal1
-                                .classList
-                                .toggle("show-modal");
-                        }
-
-                        function windowOnClick(event) {
-                            if (event.target === modal) {
-                                toggleModal();
-                            }
-                            if (event.target === modal1) {
-                                toggleModal1();
-                            }
-                        }
-
-                        trigger.addEventListener("click", toggleModal);
-                        trigger1.addEventListener("click", toggleModal1);
-                        closeButton.addEventListener("click", toggleModal);
-                        closeButton1.addEventListener("click", toggleModal1);
-
-                        window.addEventListener("click", windowOnClick);
-                    </script>
-
                 </div>
             </div>
-        </div>
-    </body>
-</html>
+        </body>
+    </html>

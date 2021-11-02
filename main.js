@@ -65,13 +65,13 @@ app.get('/friendsList', function (req, res) {
         var memName = req.session.memName;
         var profileImg = req.session.profileImg;
         var profileContent = req.session.profileContent;
-        console.log(profileImg);
+     
         if(profileImg != null) {
         var buffer2 = Buffer.from(profileImg, 'utf8'); 
         var profileImg = buffer2.toString(); } //버퍼객체 안의 내용 String으로 변경
 
 
-        var sql = 'SELECT  m.memName, m.memNum, profileImg, profileContent FROM member as m left ' +
+        var sql = 'SELECT  m.memId, m.memName, m.memNum, profileImg, profileContent FROM member as m left ' +
                 'outer join friends as f on f.memNum = m.memNum WHERE f.memId=?';
         conn.query(sql, memId, function (err, results) {
             if (err) {
@@ -81,7 +81,8 @@ app.get('/friendsList', function (req, res) {
                     data: results,
                     memName: memName,
                     profileImg : profileImg,
-                    profileContent: profileContent
+                    profileContent: profileContent,
+                    memId : memId
                 });
             }
 
@@ -128,7 +129,7 @@ app.post('/login', function (req, res) {
         }
 
         var member = results[0];
-        console.log(member);
+       
         if (pwd === member.memPwd) {
             req.session.memNum = results[0].memNum; //세션에 로그인 정보 입력
             req.session.memId = results[0].memId;
@@ -160,7 +161,7 @@ app.post('/addMembers', upload.single('profileImg'), (req, res) => {
     let memName = req.body.memName;
     let memPhone = req.body.memPhone;
     let profileImg = '/image/' + req.file.filename;
-    console.log(profileImg);
+    
     let profileContent = req.body.profileContent;
     let params = [
         memId,
@@ -175,6 +176,29 @@ app.post('/addMembers', upload.single('profileImg'), (req, res) => {
             console.log(err);
         } else {
             res.send(rows);
+        }
+
+    })
+
+})
+
+app.post('/addFriends',function(req, res) {
+
+    let sql = 'INSERT INTO friends(memId,memNum) VALUES(?,(SELECT memNum FROM member WHERE memId=?))';
+
+    let memId = req.body.memId;
+    let memIdMy = req.session.memId;
+
+    let params = [
+        memIdMy,
+        memId
+        
+    ];
+    conn.query(sql, params, (err, rows, fields) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.redirect('/friendsList');
         }
 
     })
