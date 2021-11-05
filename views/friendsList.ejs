@@ -239,9 +239,9 @@
             }
 
             .searchResult {
-                width: 350px;
+                width: 100%;
                 text-align: center;
-                padding-left: 100px;
+                
                 padding-top: 20px;
             }
 
@@ -273,39 +273,38 @@
                 right: 105px;
             }
 
-            .modProfile_input{
-                width:320px;
-                border:none;
-                border-bottom:0.5px solid #e2e2e2;
-                background-color:white;
-                margin-left:20px;
-                border-radius:0px;
-                color:gray;
+            .modProfile_input {
+                width: 320px;
+                border: none;
+                border-bottom: 0.5px solid #e2e2e2;
+                background-color: white;
+                margin-left: 20px;
+                border-radius: 0;
+                color: gray;
                 position: relative;
             }
 
-            #counting_nickName{
-                font-size:15px;
-                color:#999;
-                position:absolute;
-                top:370px;
-                right:20px;
+            #counting_nickName {
+                font-size: 15px;
+                color: #999;
+                position: absolute;
+                top: 370px;
+                right: 20px;
             }
 
-            #counting_profileContent{
-                font-size:15px;
-                color:#999;
-                position:absolute;
-                top:420px;
-                right:20px;
+            #counting_profileContent {
+                font-size: 15px;
+                color: #999;
+                position: absolute;
+                top: 420px;
+                right: 20px;
             }
 
-            form{
-                width:100%; 
-                height:100%;
+            form {
+                width: 100%;
+                height: 100%;
+      
             }
-
-
         </style>
         <script>
 
@@ -332,7 +331,7 @@
                             '<tr><td><img style="width:100px; height:100px;" alt="seachProfileImg" src="' +
                             json[0].profileImg + '"/></td></tr>'
                         );
-                        $(".searchResult").append('<tr><td>' + json[0].memName + '</td></tr>');
+                        $(".searchResult").append('<tr><td><input style="width:100px; margin-left:125px; text-align:center; border:none; background-color:transparent;" readonly type="text" name="memName" value="' + json[0].memName + '"/><input  type="submit" id="submit" value="친구추가" style="float:right; position:relative; bottom:20px;"></td></tr>');
 
                     })
                     .fail(function (xhr, status, errorThrown) {
@@ -377,27 +376,37 @@
             }
 
             //nickName 글자 수 체크
-            function counter_nickName(){
-  document.getElementById("counting_nickName").innerHTML = document.getElementById("nickName").value.length+"/20"; 
- 
- }
+            function counter_nickName() {
+                document
+                    .getElementById("counting_nickName")
+                    .innerHTML = document
+                    .getElementById("nickName")
+                    .value
+                    .length + "/20";
 
-  //profileContent 글자 수 체크
-  function counter_profileContent(){
-  document.getElementById("counting_profileContent").innerHTML = document.getElementById("profileContent").value.length+"/60"; 
- 
- }
+            }
 
+            //profileContent 글자 수 체크
+            function counter_profileContent() {
+                document
+                    .getElementById("counting_profileContent")
+                    .innerHTML = document
+                    .getElementById("profileContent")
+                    .value
+                    .length + "/60";
 
- //input 박스 글자 수 자르기
- function maxLength(e){
-        if(e.value.length > e.maxLength){
-            e.value = e.value.slice(0, e.maxLength);
+            }
 
-        }
+            //input 박스 글자 수 자르기
+            function maxLength(e) {
+                if (e.value.length > e.maxLength) {
+                    e.value = e
+                        .value
+                        .slice(0, e.maxLength);
 
-    }
+                }
 
+            }
         </script>
 
     </head>
@@ -405,9 +414,13 @@
         <div class="friendsList">
             <div style="width:100px; background-color:#ebe7f1; margin-left:10px;">
                 <a href="/friendsList" style="margin-left:25%;">
-                <img src="/img/user.png" alt="user" height="40" style=" margin-top:38%;"></a>
+                    <img src="/img/user.png" alt="user" height="40" style=" margin-top:38%;"></a>
                 <a href="/chattingList" style="margin-left:27%;">
-                    <img src="/img/chatting_dark.png" alt="user" height="30" style=" margin-top:50%;"></a>
+                    <img
+                        src="/img/chatting_dark.png"
+                        alt="user"
+                        height="30"
+                        style=" margin-top:50%;"></a>
             </div>
             <div class="wrapper" style="width:100%; margin-left:30px;">
                 <div class="display-container">
@@ -436,7 +449,9 @@
                         </h4>
                         <hr>
                         <h4 style="color:gray;">친구 110명</h4>
+
                         <div>
+
                             <% if(data != "") {%>
                                 <% for(let i=0; i<data.length; i++){ %>
                                     <div>
@@ -505,21 +520,31 @@
                                                     style="background-color:white; border:none; cursor:pointer;"><img class="profileImg" src="/img/profileBasicImg.png"/></button>
                                             <% } %>
 
-                                            <h4 style="display:flex; flex-direction: column; ">
-                                                <p class="profileFont">
-                                                    <% if(data[i].friendsNickName != null) { %>
-                                                        <%=data[i].friendsNickName %>
-                                                    <% } else { %>
-                                                        <%=data[i].memName %>
-                                                    <% } %>
-                                                    <% if(data[i].profileContent !=null) { %>
-                                                        <br>
-                                                        <span style="font-weight: normal; padding-top:5px;"><%=data[i].profileContent %>
-                                                        <% } %></span></p>
-                                            </h4>
+                                            <form name="friendsChat" action="/friendsChat" method="post">
+                                                <input type="hidden" name="memNum" value="<%=data[i].memNum%>"/>
+                                                <input type="hidden" name="friendsNickName" value="<%=data[i].friendsNickName%>"/>
+                                                <input type="hidden" name="memName" value="<%=data[i].memName%>"/>
+                                                <h4 style="display:flex; flex-direction: column; ">
+                                                    <button           
+                                                        id="chat"
+                                                        style="width:100%; float:left; font-size:15px; text-align:left; height:100%; background-color: transparent; border:none;">
+                                                        <p class="profileFont">
+                                                            <% if(data[i].friendsNickName != null) { %>
+                                                                <span style="font-weight: bold;"><%=data[i].friendsNickName %></span>
+                                                            <% } else { %>
+                                                                <span style="font-weight: bold;"><%=data[i].memName %></span>
+                                                            <% } %>
+                                                            <% if(data[i].profileContent !=null) { %>
+                                                                <br>
+                                                                <span style=" padding-top:5px;"><%=data[i].profileContent %>
+                                                                <% } %></span></p>
+                                                    </button>
+                                                </h4>
+                                            </form>
                                         </div>
                                     <% } %>
                                 </div>
+
                             <% } else {%>
                                 <h1>친구없어요</h1>
                             <% }%>
@@ -532,30 +557,27 @@
                                 <span class="close-button">&times;</span>
                                 <h2 class="title">친구추가</h2>
                                 <form action="/addFriends" method="POST">
-
+                                 
                                     <input
                                         id="memIdInput"
                                         type="text"
                                         name="memId"
                                         placeholder="아이디를 입력해주세요"
                                         required="required"
-                                        style="width:280px; float:left;">
-
-                                    <input
-                                        type="submit"
-                                        id="submit"
-                                        value="친구추가"
-                                        style="float:right; position:relative; margin-top:45%;">
+                                        style="width:320px; float:left;">
+                                        <p
+                                    style="font-size:13px; padding-top:63px; padding-left:3px;
+                                    white-space:nowrap; color:gray;">GENIE ID를 등록하고 검색을 허용한 친구만 찾을 수 있습니다.</p>
+                                        <table class="searchResult" id="searchResult"></table>
+                                    
                                 </form>
 
                                 <button
                                     onclick="searchFriends()"
                                     id="searchFriends"
-                                    style="height:52px; margin-top:2px; position:absolute; margin-left:25px; float:left;">검색</button>
-                                <p
-                                    style="font-size:13px; margin-left:23px; padding-top:60px;
-                                    white-space:nowrap; color:gray;">GENIE ID를 등록하고 검색을 허용한 친구만 찾을 수 있습니다.</p>
-                                <table class="searchResult" id="searchResult"></table>
+                                    style="height:52px; top:87px; margin-top:2px; right:30px; position:absolute; margin-left:25px; float:left;">검색</button>
+                                
+                               
 
                             </div>
                         </div>
@@ -612,63 +634,100 @@
                                 <!--<form action="/" method="POST">-->
 
                                 <label></label>
-                            <form action="/modProfile" method="post" encType='multipart/form-data'>
-                                <div style="text-align: center; margin-top:100px; position:relative;">
-                                    <% if(profileImg !=null) { %>
-                                        <img 
-                                            id="preview"
-                                            class="profileDetail_img"
-                                            style="width:140px; height:140px;"
-                                            src="<%= profileImg %>"
-                                            onclick="fnImgPop(this.src)"/>
-                                    <% } else { %>
-                                        <img
-                                            id="preview"
-                                            class="profileDetail_img"
-                                            src="/img/profileBasicImg.png"
-                                            style="width:140px; height:140px;"
-                                            onclick="fnImgPop(this.src)"/>
+                                <form action="/modProfile" method="post" enctype='multipart/form-data'>
+                                    <div style="text-align: center; margin-top:100px; position:relative;">
+                                        <% if(profileImg !=null) { %>
+                                            <img
+                                                id="preview"
+                                                class="profileDetail_img"
+                                                style="width:140px; height:140px;"
+                                                src="<%= profileImg %>"
+                                                onclick="fnImgPop(this.src)"/>
+                                        <% } else { %>
+                                            <img
+                                                id="preview"
+                                                class="profileDetail_img"
+                                                src="/img/profileBasicImg.png"
+                                                style="width:140px; height:140px;"
+                                                onclick="fnImgPop(this.src)"/>
 
-                                    <% } %>
-                                    <label for="file" class="modProfileLabel"><img src="/img/camera.png" style="width:25px; height:20px;"/></label>
-                                    <input type="hidden"  name="originProfileImg" value="<%=profileImg%>"/>
-                                    <input type="file" id="file" name="profileImg" class="modProfile" onchange="readURL(this);" />
-                                </div>
-                                <div style="margin-top:40px;">
-                                    <% if (nickName !=null) {%>
-                                        <input class="modProfile_input" id="nickName" name="nickName" type="text" value="<%= nickName %>" maxlength="20" onkeyup="counter_nickName()" oninput="maxLength(this);"/><span id="counting_nickName"><%=nickName.length%>/20</span>
-                                    <%} else{%>
-                                        <input class="modProfile_input" id="nickName" name="nickName" type="text" value="<%= memName %>" maxlength="20" onkeyup="counter_nickName()" oninput="maxLength(this);"/><span id="counting_nickName"><%=nickName.length%>/20</span>
-                                    <%}%>
-
-                                    <% if (profileContent !=null) {%>
-                                        <input class="modProfile_input"
-                                            name="profileContent"
-                                            id="profileContent"
-                                            type="text"
-                                            placeholder="상태메세지를 입력해주세요"
-                                            value="<%=profileContent%>" maxlength="60" oninput="maxLength(this);" onkeyup="counter_profileContent()"/><span id="counting_profileContent"><%=profileContent.length%>/60</span>
-                                    <%} else{%>
-                                        <input class="modProfile_input" id="profileContent" name="profileContent" type="text" placeholder="상태메세지를 입력해주세요" maxlength="60" oninput="maxLength(this);" onkeyup="counter_profileContent()"/><span id="counting_profileContent"><%=profileContent.length%>/60</span>
-                                    <%}%>
-
-                                    <div>
-                                        
+                                        <% } %>
+                                        <label for="file" class="modProfileLabel"><img src="/img/camera.png" style="width:25px; height:20px;"/></label>
+                                        <input type="hidden" name="originProfileImg" value="<%=profileImg%>"/>
                                         <input
-                                        type="button"
-                                        id="submit"
-                                        class="close-button2"
-                                        value="취소"
-                                        style="float:right; position:relative; margin-top:45%; margin-left:5%; margin-right:15%;">
-                                        <input
-                                        type="submit"
-                                        id="submit"
-                                        value="확인"
-                                        style="float:right; position:relative; margin-top:45%; ">
+                                            type="file"
+                                            id="file"
+                                            name="profileImg"
+                                            class="modProfile"
+                                            onchange="readURL(this);"/>
                                     </div>
-                                    
-                                </div>
-                            </form>
+                                    <div style="margin-top:40px;">
+                                        <% if (nickName !=null) {%>
+                                            <input
+                                                class="modProfile_input"
+                                                id="nickName"
+                                                name="nickName"
+                                                type="text"
+                                                value="<%= nickName %>"
+                                                maxlength="20"
+                                                onkeyup="counter_nickName()"
+                                                oninput="maxLength(this);"/>
+                                            <span id="counting_nickName"><%=nickName.length%>/20</span>
+                                        <%} else{%>
+                                            <input
+                                                class="modProfile_input"
+                                                id="nickName"
+                                                name="nickName"
+                                                type="text"
+                                                value="<%= memName %>"
+                                                maxlength="20"
+                                                onkeyup="counter_nickName()"
+                                                oninput="maxLength(this);"/>
+                                            <span id="counting_nickName"><%=nickName.length%>/20</span>
+                                        <%}%>
+
+                                        <% if (profileContent !=null) {%>
+                                            <input
+                                                class="modProfile_input"
+                                                name="profileContent"
+                                                id="profileContent"
+                                                type="text"
+                                                placeholder="상태메세지를 입력해주세요"
+                                                value="<%=profileContent%>"
+                                                maxlength="60"
+                                                oninput="maxLength(this);"
+                                                onkeyup="counter_profileContent()"/>
+                                            <span id="counting_profileContent"><%=profileContent.length%>/60</span>
+                                        <%} else{%>
+                                            <input
+                                                class="modProfile_input"
+                                                id="profileContent"
+                                                name="profileContent"
+                                                type="text"
+                                                placeholder="상태메세지를 입력해주세요"
+                                                maxlength="60"
+                                                oninput="maxLength(this);"
+                                                onkeyup="counter_profileContent()"/>
+                                            <span id="counting_profileContent"><%=profileContent.length%>/60</span>
+                                        <%}%>
+
+                                        <div>
+
+                                            <input
+                                                type="button"
+                                                id="submit"
+                                                class="close-button2"
+                                                value="취소"
+                                                style="float:right; position:relative; margin-top:45%; margin-left:5%; margin-right:15%;">
+                                            <input
+                                                type="submit"
+                                                id="submit"
+                                                value="확인"
+                                                style="float:right; position:relative; margin-top:45%; ">
+                                        </div>
+
+                                    </div>
+                                </form>
                                 <hr
                                     style="width:100%; margin-top:50px;border:0.01em solid #eeeeee86; border-bottom: 0;">
 

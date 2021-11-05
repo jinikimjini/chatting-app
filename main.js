@@ -197,13 +197,17 @@ app.post('/addMembers', upload.single('profileImg'), (req, res) => {
 
 app.post('/addFriends', function (req, res) {
 
-    let sql = 'INSERT INTO friends(memId,memNum) VALUES(?,(SELECT memNum FROM member WHERE me' +
-            'mId=?))';
+    let sql = 'INSERT INTO friends(memId,memNum,friendsNickName) VALUES(?,(SELECT memNum FROM member WHERE me' +
+            'mId=?),?)';
 
     let memId = req.body.memId;
     let memIdMy = req.session.memId;
+    let friendsNickName = req.body.memName;
+    console.log(friendsNickName);
+    console.log(memId);
+   
 
-    let params = [memIdMy, memId];
+    let params = [memIdMy, memId, friendsNickName];
     conn.query(sql, params, (err, rows, fields) => {
         if (err) {
             console.log(err);
@@ -264,5 +268,18 @@ app.post('/modProfile', upload.single('profileImg'), (req, res) => {
 
     })
 
+});
+
+app.post('/friendsChat', function (req, res) {
+   var memNum = req.body.memNum;
+    var friendsNickName=req.body.friendsNickName;
+    var memName=req.body.memName;
+    
+    console.log(friendsNickName);
+    console.log(memNum);
+  res.render('chat',{memNum: memNum,
+    friendsNickName: friendsNickName
+      
+  })
 });
 app.listen(5000); //서버를 구동시키는 api
