@@ -105,13 +105,7 @@
                 transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
             }
 
-            .modalFriends0,
-            .modalFriends1,
-            .modalFriends2,
-            .modalFriends3,
-            .modalFriends4,
-            .modalFriends5,
-            .modalFriends6 {
+            [class *="modalFriends"] {
                 position: fixed;
                 left: 0;
                 top: 0;
@@ -151,9 +145,11 @@
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                background-image: linear-gradient(rgba(24, 24, 34, 0.4), rgba(24, 24, 34, 0.4)),url(/img/background.png);
+                background-color: white;
                 width: 380px;
                 height: 720px;
+                border: 0.01rem solid #cccccc;
+                box-shadow: 2px 3px 5px 0 #cccccc;
 
             }
             .close-button {
@@ -165,15 +161,7 @@
                 border-radius: 0.25rem;
                 background-color: lightgray;
             }
-
-            .close-friends-button0,
-            .close-friends-button1,
-            .close-friends-button2,
-            .close-friends-button3,
-            .close-friends-button4,
-            .close-friends-button5,
-            .close-friends-button6,
-            .close-friends-button7 {
+            [class *="close-friends-button"] {
                 float: right;
                 width: 1.5rem;
                 line-height: 1.5rem;
@@ -222,7 +210,7 @@
                 width: 55px;
                 float: left;
                 border-radius: 15px;
-                background-color:transparent;
+                background-color: transparent;
 
             }
 
@@ -238,9 +226,9 @@
                 width: 100px;
                 height: 100px;
                 border-radius: 20px;
-                background-color:transparent;
+                background-color: transparent;
                 border: none;
-                cursor:pointer;
+                cursor: pointer;
             }
 
             .profileDetail_name {
@@ -249,6 +237,75 @@
                 color: white;
                 font-weight: normal;
             }
+
+            .searchResult {
+                width: 350px;
+                text-align: center;
+                padding-left: 100px;
+                padding-top: 20px;
+            }
+
+            .title {
+                font-weight: normal;
+            }
+
+            .modProfile {
+                position: absolute;
+                width: 0;
+                height: 0;
+                padding: 0;
+                overflow: hidden;
+                border: 0;
+            }
+
+            .modProfileLabel {
+                position: absolute;
+                display: inline-block;
+                padding: 10px;
+                color: #999;
+                vertical-align: middle;
+                background-color: #fdfdfd;
+                cursor: pointer;
+                border: 1px solid #ebebeb;
+                border-radius: 100%;
+                margin-top: 0;
+                top: 100px;
+                right: 105px;
+            }
+
+            .modProfile_input{
+                width:320px;
+                border:none;
+                border-bottom:0.5px solid #e2e2e2;
+                background-color:white;
+                margin-left:20px;
+                border-radius:0px;
+                color:gray;
+                position: relative;
+            }
+
+            #counting_nickName{
+                font-size:15px;
+                color:#999;
+                position:absolute;
+                top:370px;
+                right:20px;
+            }
+
+            #counting_profileContent{
+                font-size:15px;
+                color:#999;
+                position:absolute;
+                top:420px;
+                right:20px;
+            }
+
+            form{
+                width:100%; 
+                height:100%;
+            }
+
+
         </style>
         <script>
 
@@ -272,9 +329,10 @@
                         } //검색 회원 삭제
 
                         $(".searchResult").append(
-                            '<td><img alt="seachProfileImg" src="' + json[0].profileImg + '"/></td>'
+                            '<tr><td><img style="width:100px; height:100px;" alt="seachProfileImg" src="' +
+                            json[0].profileImg + '"/></td></tr>'
                         );
-                        $(".searchResult").append('<td>' + json[0].memName + '</td>');
+                        $(".searchResult").append('<tr><td>' + json[0].memName + '</td></tr>');
 
                     })
                     .fail(function (xhr, status, errorThrown) {
@@ -286,23 +344,70 @@
                 $('.modal1').draggable({handle: ".modal-content1"});
             }); //modal 드래그
 
-            function fnImgPop(url){
-  var img=new Image();
-  img.src=url;
-  var img_width=img.width;
-  var win_width=img.width+25;
-  var img_height=img.height;
-  var win=img.height+30;
-  var OpenWindow=window.open('','_blank', 'width='+img_width+', height='+img_height+', menubars=no, scrollbars=auto');
-  OpenWindow.document.write("<style>body{margin:0px;}</style><img src='"+url+"' width='"+win_width+"'>");
+            //프로필 상세창 이미지 확대
+            function fnImgPop(url) {
+                var img = new Image();
+                img.src = url;
+                var img_width = img.width;
+                var win_width = img.width + 25;
+                var img_height = img.height;
+                var win = img.height + 30;
+                var OpenWindow = window.open(
+                    '',
+                    '_blank',
+                    'width=' + img_width + ', height=' + img_height + ', menubars=no, scrollbars=au' +
+                            'to'
+                );
+                OpenWindow
+                    .document
+                    .write(
+                        "<style>body{margin:0px;}</style><img src='" + url + "' width='" + win_width +
+                        "'>"
+                    );
+            }
+
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#preview').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            //nickName 글자 수 체크
+            function counter_nickName(){
+  document.getElementById("counting_nickName").innerHTML = document.getElementById("nickName").value.length+"/20"; 
+ 
  }
+
+  //profileContent 글자 수 체크
+  function counter_profileContent(){
+  document.getElementById("counting_profileContent").innerHTML = document.getElementById("profileContent").value.length+"/60"; 
+ 
+ }
+
+
+ //input 박스 글자 수 자르기
+ function maxLength(e){
+        if(e.value.length > e.maxLength){
+            e.value = e.value.slice(0, e.maxLength);
+
+        }
+
+    }
+
         </script>
 
     </head>
     <body style="margin:0px;">
         <div class="friendsList">
             <div style="width:100px; background-color:#ebe7f1; margin-left:10px;">
-                <img src="/img/user.png" alt="user" height="40">
+                <a href="/friendsList" style="margin-left:25%;">
+                <img src="/img/user.png" alt="user" height="40" style=" margin-top:38%;"></a>
+                <a href="/chattingList" style="margin-left:27%;">
+                    <img src="/img/chatting_dark.png" alt="user" height="30" style=" margin-top:50%;"></a>
             </div>
             <div class="wrapper" style="width:100%; margin-left:30px;">
                 <div class="display-container">
@@ -315,19 +420,15 @@
 
                         <a>
                             <% if(profileImg !=null) { %>
-                                <button
-                                    class="profileImg trigger1"
-                                    style="border:none; cursor:pointer;"><img class="profileImg" src="<%= profileImg %>"/></button>
+                                <button class="profileImg trigger1" style="border:none; cursor:pointer;"><img class="profileImg" src="<%= profileImg %>"/></button>
                             <% } else { %>
-                                <button
-                                    class="profileImg trigger1"
-                                    style=" border:none; cursor:pointer;"><img class="profileImg" src="/img/profileBasicImg.png"/></button>
+                                <button class="profileImg trigger1" style=" border:none; cursor:pointer;"><img class="profileImg" src="/img/profileBasicImg.png"/></button>
 
                             <% } %>
 
                         </a>
                         <h4 style="display:flex; flex-direction: column; ">
-                            <p class="profileFont"><%=memName %>
+                            <p class="profileFont"><%=nickName %>
                                 <% if(profileContent !=null) { %>
                                     <br>
                                     <span style="font-weight: normal; padding-top:5px;"><%=profileContent %>
@@ -338,7 +439,7 @@
                         <div>
                             <% if(data != "") {%>
                                 <% for(let i=0; i<data.length; i++){ %>
-                                    <div >
+                                    <div>
                                         <!-- 팝업 될 레이어 // 프로필 상세보기 친구-->
 
                                         <div class="modalFriends<%=i%>">
@@ -353,19 +454,30 @@
                                                         <% i %>
                                                         </p>
                                                         <% if(data[i].profileImg !=null) { %>
-                                                            <img class="profileDetail_img" src="<%= data[i].profileImg %>" onclick="fnImgPop(this.src)"/>
+                                                            <img
+                                                                class="profileDetail_img"
+                                                                src="<%= data[i].profileImg %>"
+                                                                onclick="fnImgPop(this.src)"/>
                                                         <% } else { %>
-                                                            <img class="profileDetail_img" src="/img/profileBasicImg.png" onclick="fnImgPop(this.src)"/>
+                                                            <img
+                                                                class="profileDetail_img"
+                                                                src="/img/profileBasicImg.png"
+                                                                onclick="fnImgPop(this.src)"/>
 
                                                         <% } %>
 
-                                                        <p class="profileDetail_name"><%=data[i].memName %></p>
+                                                        <% if(data[i].friendsNickName != null) { %>
+                                                            <p class="profileDetail_name"><%=data[i].friendsNickName %></p>
+                                                        <% } else { %>
+                                                            <p class="profileDetail_name"><%=data[i].memName %></p>
+                                                        <% } %>
+
                                                         <hr
                                                             style="width:100%; margin-top:50px;border:0.01em solid #eeeeee86; border-bottom: 0;">
                                                     </div>
                                                     <div style="margin-top:33%; margin-left:23%;">
                                                         <button
-                                                            class="profileImg trigger2"
+                                                            class="profileImg "
                                                             style="background-color:transparent; border:none; cursor:pointer; width:100px;"><img style=" width:25px; height:25px;" src="/img/pen.png"/><br>
                                                             <p style="color:white; ">프로필관리</p>
                                                         </button>
@@ -394,7 +506,12 @@
                                             <% } %>
 
                                             <h4 style="display:flex; flex-direction: column; ">
-                                                <p class="profileFont"><%=data[i].memName %>
+                                                <p class="profileFont">
+                                                    <% if(data[i].friendsNickName != null) { %>
+                                                        <%=data[i].friendsNickName %>
+                                                    <% } else { %>
+                                                        <%=data[i].memName %>
+                                                    <% } %>
                                                     <% if(data[i].profileContent !=null) { %>
                                                         <br>
                                                         <span style="font-weight: normal; padding-top:5px;"><%=data[i].profileContent %>
@@ -416,25 +533,30 @@
                                 <h2 class="title">친구추가</h2>
                                 <form action="/addFriends" method="POST">
 
-                                <input
-                                    id="memIdInput"
-                                    type="text"
-                                    name="memId"
-                                    placeholder="아이디를 입력해주세요"
-                                    required="required"
-                                    style="width:280px; float:left;">
-                                
-                                <input type="submit" id="submit" value="확인" style="float:right; position:relative; margin-top:45%;">
-                            </form>
+                                    <input
+                                        id="memIdInput"
+                                        type="text"
+                                        name="memId"
+                                        placeholder="아이디를 입력해주세요"
+                                        required="required"
+                                        style="width:280px; float:left;">
+
+                                    <input
+                                        type="submit"
+                                        id="submit"
+                                        value="친구추가"
+                                        style="float:right; position:relative; margin-top:45%;">
+                                </form>
+
                                 <button
                                     onclick="searchFriends()"
                                     id="searchFriends"
                                     style="height:52px; margin-top:2px; position:absolute; margin-left:25px; float:left;">검색</button>
-                                <table>
-                                    <tr class="searchResult" id="searchResult" style="height:120px;"></tr>
-                                </table>
-                               
-                                
+                                <p
+                                    style="font-size:13px; margin-left:23px; padding-top:60px;
+                                    white-space:nowrap; color:gray;">GENIE ID를 등록하고 검색을 허용한 친구만 찾을 수 있습니다.</p>
+                                <table class="searchResult" id="searchResult"></table>
+
                             </div>
                         </div>
                         <!-- 팝업 될 레이어 // 내프로필상세보기창-->
@@ -449,13 +571,19 @@
                                 <div style="margin-top:107%; height:100px; text-align:center;">
 
                                     <% if(profileImg !=null) { %>
-                                        <img class="profileDetail_img" src="<%= profileImg %>" onclick="fnImgPop(this.src)"/>
+                                        <img
+                                            class="profileDetail_img"
+                                            src="<%= profileImg %>"
+                                            onclick="fnImgPop(this.src)"/>
                                     <% } else { %>
-                                        <img class="profileDetail_img" src="/img/profileBasicImg.png" onclick="fnImgPop(this.src)"/>
+                                        <img
+                                            class="profileDetail_img"
+                                            src="/img/profileBasicImg.png"
+                                            onclick="fnImgPop(this.src)"/>
 
                                     <% } %>
 
-                                    <p class="profileDetail_name"><%=memName %></p>
+                                    <p class="profileDetail_name"><%=nickName %></p>
                                     <hr
                                         style="width:100%; margin-top:50px;border:0.01em solid #eeeeee86; border-bottom: 0;">
                                 </div>
@@ -480,24 +608,70 @@
                         <!-- 팝업 될 레이어 // 내프로필편집창-->
                         <div class="modal2">
                             <div class="modal-content2" id="modal">
-                                <span class="close-button1">&times;</span>
-                                <h2 class="title"></h2>
+                                <h2 class="title" style="margin-left:30px; margin-top:40px;">프로필편집</h2>
                                 <!--<form action="/" method="POST">-->
 
                                 <label></label>
-                                <div style="margin-top:107%; height:100px; text-align:center;">
-
+                            <form action="/modProfile" method="post" encType='multipart/form-data'>
+                                <div style="text-align: center; margin-top:100px; position:relative;">
                                     <% if(profileImg !=null) { %>
-                                        <img class="profileDetail_img" src="<%= profileImg %>" onclick="fnImgPop(this.src)"/></button>
+                                        <img 
+                                            id="preview"
+                                            class="profileDetail_img"
+                                            style="width:140px; height:140px;"
+                                            src="<%= profileImg %>"
+                                            onclick="fnImgPop(this.src)"/>
                                     <% } else { %>
-                                        <img class="profileDetail_img" src="/img/profileBasicImg.png" onclick="fnImgPop(this.src)"/>
+                                        <img
+                                            id="preview"
+                                            class="profileDetail_img"
+                                            src="/img/profileBasicImg.png"
+                                            style="width:140px; height:140px;"
+                                            onclick="fnImgPop(this.src)"/>
 
                                     <% } %>
-
-                                    <p class="profileDetail_name"><%=memName %></p>
-                                    <hr
-                                        style="width:100%; margin-top:50px;border:0.01em solid #eeeeee86; border-bottom: 0;">
+                                    <label for="file" class="modProfileLabel"><img src="/img/camera.png" style="width:25px; height:20px;"/></label>
+                                    <input type="hidden"  name="originProfileImg" value="<%=profileImg%>"/>
+                                    <input type="file" id="file" name="profileImg" class="modProfile" onchange="readURL(this);" />
                                 </div>
+                                <div style="margin-top:40px;">
+                                    <% if (nickName !=null) {%>
+                                        <input class="modProfile_input" id="nickName" name="nickName" type="text" value="<%= nickName %>" maxlength="20" onkeyup="counter_nickName()" oninput="maxLength(this);"/><span id="counting_nickName"><%=nickName.length%>/20</span>
+                                    <%} else{%>
+                                        <input class="modProfile_input" id="nickName" name="nickName" type="text" value="<%= memName %>" maxlength="20" onkeyup="counter_nickName()" oninput="maxLength(this);"/><span id="counting_nickName"><%=nickName.length%>/20</span>
+                                    <%}%>
+
+                                    <% if (profileContent !=null) {%>
+                                        <input class="modProfile_input"
+                                            name="profileContent"
+                                            id="profileContent"
+                                            type="text"
+                                            placeholder="상태메세지를 입력해주세요"
+                                            value="<%=profileContent%>" maxlength="60" oninput="maxLength(this);" onkeyup="counter_profileContent()"/><span id="counting_profileContent"><%=profileContent.length%>/60</span>
+                                    <%} else{%>
+                                        <input class="modProfile_input" id="profileContent" name="profileContent" type="text" placeholder="상태메세지를 입력해주세요" maxlength="60" oninput="maxLength(this);" onkeyup="counter_profileContent()"/><span id="counting_profileContent"><%=profileContent.length%>/60</span>
+                                    <%}%>
+
+                                    <div>
+                                        
+                                        <input
+                                        type="button"
+                                        id="submit"
+                                        class="close-button2"
+                                        value="취소"
+                                        style="float:right; position:relative; margin-top:45%; margin-left:5%; margin-right:15%;">
+                                        <input
+                                        type="submit"
+                                        id="submit"
+                                        value="확인"
+                                        style="float:right; position:relative; margin-top:45%; ">
+                                    </div>
+                                    
+                                </div>
+                            </form>
+                                <hr
+                                    style="width:100%; margin-top:50px;border:0.01em solid #eeeeee86; border-bottom: 0;">
+
                                 <div style="margin-top:33%; margin-left:23%;">
                                     <button
                                         class="profileImg trigger2"
@@ -527,6 +701,7 @@
 
                             var closeButton = document.querySelector(".close-button");
                             var closeButton1 = document.querySelector(".close-button1");
+                            var closeButton2 = document.querySelector(".close-button2");
 
                             //console.log(modal);
 
@@ -559,35 +734,30 @@
                                     .toggle("show-modal");
                             }
 
-
-
                             //친구 프로필 상세창 script
                             function triggerList(triggerNum) {
-                               
+
                                 var modalFriends = document.querySelector(".modalFriends" + triggerNum);
                                 var triggerList = document.querySelector(".triggerList" + triggerNum);
 
                                 toggleModal3(modalFriends);
-                              
 
                             }
 
                             //친구 프로필 닫기 script
-                            function closeButtonFriends(triggerNum){      
+                            function closeButtonFriends(triggerNum) {
                                 var modalFriends = document.querySelector(".modalFriends" + triggerNum);
                                 toggleModal3(modalFriends);
-                              
-                                
+
                             }
 
                             trigger.addEventListener("click", toggleModal);
                             trigger1.addEventListener("click", toggleModal1);
                             trigger2.addEventListener("click", toggleModal2);
 
-                            
                             closeButton.addEventListener("click", toggleModal);
                             closeButton1.addEventListener("click", toggleModal1);
-
+                            closeButton2.addEventListener("click", toggleModal2);
 
                             //modal 밖 외부 영역 클릭시 modal 창 닫기
                             function windowOnClick(event) {
@@ -602,6 +772,9 @@
                                     toggleModal2();
                                 }
 
+                                if (event.target === modal2) {
+                                    toggleModal2();
+                                }
 
                             }
                             window.addEventListener("click", windowOnClick);

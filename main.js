@@ -10,6 +10,7 @@ var sanitizeHtml = require('sanitize-html'); //보안, 오염된 정보를 내�
 var mysql = require('mysql');
 var dbConfig = require('./src/db/mysql.js');
 const multer = require('multer');
+const fs = require('fs');
 const {createConnection} = require('net');
 const upload = multer({
     dest: 'uploads/',
@@ -63,26 +64,30 @@ app.get('/friendsList', function (req, res) {
     } else {
         var memId = req.session.memId;
         var memName = req.session.memName;
+        var nickName = req.session.nickName;
         var profileImg = req.session.profileImg;
         var profileContent = req.session.profileContent;
-     
-        if(profileImg != null) {
-        var buffer2 = Buffer.from(profileImg, 'utf8'); 
-        var profileImg = buffer2.toString(); } //버퍼객체 안의 내용 String으로 변경
 
+        if (profileImg != null) {
+            var buffer2 = Buffer.from(profileImg, 'utf8');
+            var profileImg = buffer2.toString();
+        } //버퍼객체 안의 내용 String으로 변경
 
-        var sql = 'SELECT  m.memId, m.memName, m.memNum, profileImg, profileContent FROM member as m left ' +
-                'outer join friends as f on f.memNum = m.memNum WHERE f.memId=?';
+        var sql = 'SELECT  m.memId, m.memName, m.nickName, f.friendsNickName, m.memNum, profileIm' +
+                'g, profileContent FROM member as m left outer join friends as f on f.memNum = ' +
+                'm.memNum WHERE f.memId=?';
         conn.query(sql, memId, function (err, results) {
             if (err) {
                 console.log(err);
             } else {
+
                 res.render('friendsList', {
                     data: results,
                     memName: memName,
-                    profileImg : profileImg,
+                    nickName: nickName,
+                    profileImg: profileImg,
                     profileContent: profileContent,
-                    memId : memId
+                    memId: memId
                 });
             }
 
@@ -101,6 +106,11 @@ app.post('/searchFriends', function (req, res) {
                 console.log(err);
             } else {
 
+                if (results[0].profileImg != null) { //버퍼 형태 이미지 String으로 변환
+                    var buffer2 = Buffer.from(results[0].profileImg, 'utf8');
+                    var profileImg = buffer2.toString();
+                    results[0].profileImg = profileImg; // 변환된 Img String results에 push
+                }
                 res.json(results);
             }
 
@@ -129,12 +139,13 @@ app.post('/login', function (req, res) {
         }
 
         var member = results[0];
-       
+
         if (pwd === member.memPwd) {
             req.session.memNum = results[0].memNum; //세션에 로그인 정보 입력
             req.session.memId = results[0].memId;
             req.session.memPwd = results[0].memPwd;
             req.session.memName = results[0].memName;
+            req.session.nickName = results[0].nickName;
             req.session.memPhone = results[0].memPhone;
             req.session.profileImg = results[0].profileImg;
             req.session.profileContent = results[0].profileContent;
@@ -153,20 +164,22 @@ app.post('/login', function (req, res) {
 
 app.post('/addMembers', upload.single('profileImg'), (req, res) => {
 
-    let sql = 'INSERT INTO MEMBER(memId,memPwd,memName,memPhone,profileImg,profileContent) VA' +
-            'LUES (?,?,?,?,?,?)';
+    let sql = 'INSERT INTO MEMBER(memId,memPwd,memName,nickName,memPhone,profileImg,profileCo' +
+            'ntent) VALUES (?,?,?,?,?,?)';
 
     let memId = req.body.memId;
     let memPwd = req.body.memPwd;
     let memName = req.body.memName;
+    let nickName = req.body.nickName;
     let memPhone = req.body.memPhone;
     let profileImg = '/image/' + req.file.filename;
-    
+
     let profileContent = req.body.profileContent;
     let params = [
         memId,
         memPwd,
         memName,
+        nickName,
         memPhone,
         profileImg,
         profileContent
@@ -182,18 +195,15 @@ app.post('/addMembers', upload.single('profileImg'), (req, res) => {
 
 })
 
-app.post('/addFriends',function(req, res) {
+app.post('/addFriends', function (req, res) {
 
-    let sql = 'INSERT INTO friends(memId,memNum) VALUES(?,(SELECT memNum FROM member WHERE memId=?))';
+    let sql = 'INSERT INTO friends(memId,memNum) VALUES(?,(SELECT memNum FROM member WHERE me' +
+            'mId=?))';
 
     let memId = req.body.memId;
     let memIdMy = req.session.memId;
 
-    let params = [
-        memIdMy,
-        memId
-        
-    ];
+    let params = [memIdMy, memId];
     conn.query(sql, params, (err, rows, fields) => {
         if (err) {
             console.log(err);
@@ -205,4 +215,54 @@ app.post('/addFriends',function(req, res) {
 
 })
 
+app.post('/modProfile', upload.single('profileImg'), (req, res) => {
+
+  
+
+    let memId = req.session.memId;
+    let nickName = req.body.nickName;
+    let profileContent = req.body.profileContent;
+
+    let originProfileImg =  req.body.originProfileImg;
+    let originProfileImg1   = originProfileImg.split("/");
+    let originProfileImg2     = originProfileImg1.length;
+    originProfileImg         = originProfileImg1[originProfileImg2-1];
+    
+  
+    let profileImg = '/image/' + req.file.filename;
+
+    let sql = 'UPDATE MEMBER SET nickName=?,profileImg=?,profileContent=? WHERE memId=?';
+
+    let params = [nickName, profileImg, profileContent, memId];
+    conn.query(sql, params, (err, rows, fields) => {
+        if (err) {
+            console.log(err);
+        } else {
+
+            fs.unlink('./uploads/'+originProfileImg, function(err){
+                if(err) return console.log(err);
+                console.log('file deleted successfully');
+           });  
+
+            var sql = 'SELECT * FROM member WHERE memId=?';
+            conn.query(sql, [memId], function (err, results) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    req.session.nickName = results[0].nickName;
+                    req.session.profileContent = results[0].profileContent;
+                    req.session.profileImg = results[0].profileImg;
+                    req
+                        .session
+                        .save(function () { //세션에 로그인 정보 저장
+                            res.redirect('/friendsList');
+                        });
+                };
+
+            });
+        };
+
+    })
+
+});
 app.listen(5000); //서버를 구동시키는 api
