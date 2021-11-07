@@ -67,7 +67,7 @@ app.get('/friendsList', function (req, res) {
         var nickName = req.session.nickName;
         var profileImg = req.session.profileImg;
         var profileContent = req.session.profileContent;
-
+ 
         if (profileImg != null) {
             var buffer2 = Buffer.from(profileImg, 'utf8');
             var profileImg = buffer2.toString();
@@ -197,15 +197,12 @@ app.post('/addMembers', upload.single('profileImg'), (req, res) => {
 
 app.post('/addFriends', function (req, res) {
 
-    let sql = 'INSERT INTO friends(memId,memNum,friendsNickName) VALUES(?,(SELECT memNum FROM member WHERE me' +
-            'mId=?),?)';
+    let sql = 'INSERT INTO friends(memId,memNum,friendsNickName) VALUES(?,(SELECT memNum FROM' +
+            ' member WHERE memId=?),?)';
 
     let memId = req.body.memId;
     let memIdMy = req.session.memId;
     let friendsNickName = req.body.memName;
-    console.log(friendsNickName);
-    console.log(memId);
-   
 
     let params = [memIdMy, memId, friendsNickName];
     conn.query(sql, params, (err, rows, fields) => {
@@ -221,18 +218,15 @@ app.post('/addFriends', function (req, res) {
 
 app.post('/modProfile', upload.single('profileImg'), (req, res) => {
 
-  
-
     let memId = req.session.memId;
     let nickName = req.body.nickName;
     let profileContent = req.body.profileContent;
 
-    let originProfileImg =  req.body.originProfileImg;
-    let originProfileImg1   = originProfileImg.split("/");
-    let originProfileImg2     = originProfileImg1.length;
-    originProfileImg         = originProfileImg1[originProfileImg2-1];
-    
-  
+    let originProfileImg = req.body.originProfileImg;
+    let originProfileImg1 = originProfileImg.split("/");
+    let originProfileImg2 = originProfileImg1.length;
+    originProfileImg = originProfileImg1[originProfileImg2 - 1];
+
     let profileImg = '/image/' + req.file.filename;
 
     let sql = 'UPDATE MEMBER SET nickName=?,profileImg=?,profileContent=? WHERE memId=?';
@@ -243,10 +237,11 @@ app.post('/modProfile', upload.single('profileImg'), (req, res) => {
             console.log(err);
         } else {
 
-            fs.unlink('./uploads/'+originProfileImg, function(err){
-                if(err) return console.log(err);
+            fs.unlink('./uploads/' + originProfileImg, function (err) {
+                if (err) 
+                    return console.log(err);
                 console.log('file deleted successfully');
-           });  
+            });
 
             var sql = 'SELECT * FROM member WHERE memId=?';
             conn.query(sql, [memId], function (err, results) {
@@ -271,15 +266,26 @@ app.post('/modProfile', upload.single('profileImg'), (req, res) => {
 });
 
 app.post('/friendsChat', function (req, res) {
-   var memNum = req.body.memNum;
-    var friendsNickName=req.body.friendsNickName;
-    var memName=req.body.memName;
-    
-    console.log(friendsNickName);
-    console.log(memNum);
-  res.render('chat',{memNum: memNum,
-    friendsNickName: friendsNickName
-      
-  })
-});
+    var memNum = req.body.memNum;
+    var friendsNickName = req.body.friendsNickName;
+    var sql = 'SELECT profileImg FROM member WHERE memNum=?';
+    conn.query(sql, [memNum], function (err, results) {
+        if (err) {
+            console.log(err);
+        } else {
+            var profileImg = results[0].profileImg;
+            res.render('chat', {
+                memNum: memNum,
+                friendsNickName: friendsNickName,
+                profileImg: profileImg
+            });
+        }
+
+    });
+
+ 
+ 
+
+    });
+
 app.listen(5000); //서버를 구동시키는 api

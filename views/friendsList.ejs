@@ -327,10 +327,17 @@
                             searchResult.removeChild(searchResult.firstChild);
                         } //검색 회원 삭제
 
-                        $(".searchResult").append(
+                        if(json[0].profileImg != null){
+                            $(".searchResult").append(
                             '<tr><td><img style="width:100px; height:100px;" alt="seachProfileImg" src="' +
                             json[0].profileImg + '"/></td></tr>'
                         );
+                        }else{
+                            $(".searchResult").append(
+                            '<tr><td><img style="width:100px; height:100px;" alt="seachProfileImg" src="/img/profileBasicImg.png"/></td></tr>'
+                        );
+                        }
+
                         $(".searchResult").append('<tr><td><input style="width:100px; margin-left:125px; text-align:center; border:none; background-color:transparent;" readonly type="text" name="memName" value="' + json[0].memName + '"/><input  type="submit" id="submit" value="친구추가" style="float:right; position:relative; bottom:20px;"></td></tr>');
 
                     })
@@ -481,11 +488,9 @@
 
                                                         <% } %>
 
-                                                        <% if(data[i].friendsNickName != null) { %>
+                  
                                                             <p class="profileDetail_name"><%=data[i].friendsNickName %></p>
-                                                        <% } else { %>
-                                                            <p class="profileDetail_name"><%=data[i].memName %></p>
-                                                        <% } %>
+                                                        
 
                                                         <hr
                                                             style="width:100%; margin-top:50px;border:0.01em solid #eeeeee86; border-bottom: 0;">
@@ -523,17 +528,15 @@
                                             <form name="friendsChat" action="/friendsChat" method="post">
                                                 <input type="hidden" name="memNum" value="<%=data[i].memNum%>"/>
                                                 <input type="hidden" name="friendsNickName" value="<%=data[i].friendsNickName%>"/>
-                                                <input type="hidden" name="memName" value="<%=data[i].memName%>"/>
+                                      
                                                 <h4 style="display:flex; flex-direction: column; ">
                                                     <button           
                                                         id="chat"
                                                         style="width:100%; float:left; font-size:15px; text-align:left; height:100%; background-color: transparent; border:none;">
                                                         <p class="profileFont">
-                                                            <% if(data[i].friendsNickName != null) { %>
-                                                                <span style="font-weight: bold;"><%=data[i].friendsNickName %></span>
-                                                            <% } else { %>
-                                                                <span style="font-weight: bold;"><%=data[i].memName %></span>
-                                                            <% } %>
+                                                            
+                                                                <span style="font-weight: bold;"><%=data[i].friendsNickName %></span>   
+                                                           
                                                             <% if(data[i].profileContent !=null) { %>
                                                                 <br>
                                                                 <span style=" padding-top:5px;"><%=data[i].profileContent %>
